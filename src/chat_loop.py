@@ -1,5 +1,5 @@
 # %%
-"""A persistent chatbot with system prompt and brower API access."""
+"""A persistent chatbot via system prompts, with brower API access."""
 
 
 import openai
