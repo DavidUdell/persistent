@@ -7,6 +7,7 @@ Note that the sync playwright API will not run in a notebook environment.
 
 
 import os
+from textwrap import dedent
 
 import openai
 from playwright.sync_api import sync_playwright
@@ -14,27 +15,38 @@ from playwright.sync_api import sync_playwright
 # %%
 # Constants
 openai.api_key = os.getenv("OPENAI_API_KEY")
-# System prompt
-messages: dict = {
+SYSTEM_PROMPT: str = dedent(
+    """
+    You are an autonomous AI with browser access through the `playwright` API.
+    """
+)
+text: dict = {
     "role": "system",
-    "content": """You are an AI with `playwright` API browser access.""",
+    "content": f"{SYSTEM_PROMPT}",
 }
 
 
 # %%
-# Browser setup
+# Browser setup functionality
 def run(pwrite):
     """Run playwright browser setup."""
 
-    browser = pwrite.chromium.launch(headless=False)
-    page = browser.new_page()
-    page.goto("https://www.google.com")
-    print((page.title()))
+    # headless=True, the default, suppresses the actual browser window.
+    browser_instance = pwrite.chromium.launch(headless=False)
 
-    browser.close()
+    return browser_instance
 
 
-run(sync_playwright().start())
+# %%
+# Launch browser
+browser = run(sync_playwright().start())
+
+page = browser.new_page()
+
+# In-place navigation
+page.goto("https://www.google.com")
 
 # %%
 # Interaction loop
+while True:
+    pass
