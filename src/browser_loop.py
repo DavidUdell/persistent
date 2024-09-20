@@ -33,18 +33,18 @@ def run(pwrite):
 
     # headless=True, the default, suppresses the actual browser window.
     browser_instance = pwrite.chromium.launch(headless=False)
+    profile = browser_instance.new_context()
+    page_instance = profile.new_page()
 
-    return browser_instance
+    return page_instance
 
 
 # %%
 # Launch browser
-browser = run(sync_playwright().start())
-
-page = browser.new_page()
+window = run(sync_playwright().start())
 
 # In-place navigation
-page.goto("https://www.google.com")
+window.goto("https://www.google.com")
 
 # %%
 # Interaction loop
