@@ -14,16 +14,29 @@ from playwright.sync_api import sync_playwright
 
 # %%
 # Constants
-openai.api_key = os.getenv("OPENAI_API_KEY")
 SYSTEM_PROMPT: str = dedent(
     """
     You are an autonomous AI with browser access through the `playwright` API.
+
+    Decide what to do next, then issue a command from the following list by
+    replying with that command as a string:
+
+    -
+
+    You will receive page text content from now on as a response.
     """
 )
-text: dict = {
-    "role": "system",
-    "content": f"{SYSTEM_PROMPT}",
-}
+text_log: list[dict] = [
+    {
+        "role": "system",
+        "content": f"{SYSTEM_PROMPT}",
+    },
+]
+
+# %%
+# OpenAI API
+openai.api_key = os.getenv("OPENAI_API_KEY")
+# client = openai.OpenAI()
 
 
 # %%
@@ -45,8 +58,12 @@ window = run(sync_playwright().start())
 
 # In-place navigation
 window.goto("https://www.google.com")
+content = window.content()
+print(len(content))
 
 # %%
 # Interaction loop
 while True:
     pass
+
+    # Model
