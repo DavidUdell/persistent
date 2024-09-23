@@ -57,13 +57,18 @@ def run(pwrite):
 window = run(sync_playwright().start())
 
 # In-place navigation
-window.goto("https://www.google.com")
-content = window.content()
-print(len(content))
+window.goto("https://www.gwern.net/book-writing")
+content: list[str] | str = window.locator("p").all_inner_texts()[11:20]
+if isinstance(content, list):
+    content: str = "\n".join(content)
+print(content)
+
+content_dict: dict = {"role": "user", "content": content}
+text_log.append(content_dict)
 
 # %%
 # Interaction loop
-while True:
-    pass
+# while True:
+# pass
 
-    # Model
+# Model
