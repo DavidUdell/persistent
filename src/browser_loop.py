@@ -33,11 +33,6 @@ state_log: list[dict] = [
     },
 ]
 
-# %%
-# OpenAI API
-openai.api_key = os.getenv("OPENAI_API_KEY")
-# client = openai.OpenAI()
-
 
 # %%
 # Browser setup functionality
@@ -53,6 +48,17 @@ def run(pwrite):
 
 
 # %%
+# OpenAI API
+openai.api_key = os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI()
+
+# Model
+
+# %%
+# Interaction loop
+# while True:
+#     pass
+
 # Launch browser
 window = run(sync_playwright().start())
 
@@ -78,10 +84,3 @@ state_log.append(content_dict)
 
 for i in state_log:
     print(i)
-
-# %%
-# Interaction loop
-# while True:
-# pass
-
-# Model
