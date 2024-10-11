@@ -96,3 +96,15 @@ if True:  # pylint: disable=using-constant-test
     )
 
     print(completion.choices[0].message.content)
+
+    new_command = completion.choices[0].message.content
+    new_command = new_command.split("Command:")[-1].strip()
+
+    # Execute the command. Hillariously insecure; this should live in a
+    # container, really, at least.
+    new_input = exec(  # pylint: disable=exec-used
+        new_command,
+        globals(),
+        locals(),
+    )
+    print(new_input)
