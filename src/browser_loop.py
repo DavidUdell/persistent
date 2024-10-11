@@ -51,8 +51,10 @@ def run(pwrite):
 
 # %%
 # OpenAI API
-openai.api_key = os.getenv("OPENAI_API_KEY")
-# client = openai.OpenAI()
+# Remember to export the OPENAI_API_KEY env variable first.
+client = openai.OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+)
 
 # Model
 
