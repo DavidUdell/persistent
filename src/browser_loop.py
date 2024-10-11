@@ -2,7 +2,7 @@
 """
 A persistent chatbot via system prompts, with brower API access.
 
-Note that the sync playwright API will not run in a notebook environment.
+Note: the sync playwright API will not run in a notebook environment.
 """
 
 
@@ -26,7 +26,7 @@ SYSTEM_PROMPT: str = dedent(
     You will receive page text content from now on as a response.
     """
 )
-text_log: list[dict] = [
+state_log: list[dict] = [
     {
         "role": "system",
         "content": f"{SYSTEM_PROMPT}",
@@ -57,14 +57,27 @@ def run(pwrite):
 window = run(sync_playwright().start())
 
 # In-place navigation
-window.goto("https://www.gwern.net/book-writing")
-content: list[str] | str = window.locator("p").all_inner_texts()[11:20]
+SITE: str = "https://www.duckduckgo.com"
+window.goto(SITE)
+
+command_dict: dict = {
+    "role": "command",
+    "content": f"window.goto({SITE})",
+}
+state_log.append(command_dict)
+
+content: list[str] | str = window.locator("p").all_inner_texts()
 if isinstance(content, list):
     content: str = "\n".join(content)
-print(content)
 
-content_dict: dict = {"role": "user", "content": content}
-text_log.append(content_dict)
+content_dict: dict = {
+    "role": "'\\n.'.join(window.locator('p').all_inner_texts())",
+    "content": content,
+}
+state_log.append(content_dict)
+
+for i in state_log:
+    print(i)
 
 # %%
 # Interaction loop
