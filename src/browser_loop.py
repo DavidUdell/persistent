@@ -12,6 +12,7 @@ from textwrap import dedent
 import openai
 from playwright.sync_api import sync_playwright
 
+
 # %%
 # Constants
 SYSTEM_PROMPT: str = dedent(
@@ -23,7 +24,7 @@ SYSTEM_PROMPT: str = dedent(
 
     -
 
-    You will receive page text content from now on as a response.
+    You will receive page text content from now on as user responses.
     """
 )
 
@@ -51,41 +52,42 @@ def run(pwrite):
 # %%
 # OpenAI API
 openai.api_key = os.getenv("OPENAI_API_KEY")
-client = openai.OpenAI()
+# client = openai.OpenAI()
 
 # Model
 
 # %%
 # Interaction loop
-# while True:
-#     pass
+if True:  # pylint: disable=using-constant-test
+    # Launch browser
+    window = run(sync_playwright().start())
 
-# Launch browser
-window = run(sync_playwright().start())
+    # In-place navigation
+    SITE: str = "https://www.duckduckgo.com"
+    command_str: str = f"Command: window.goto({SITE})"
+    window.goto(SITE)
+    command_dict: dict = {
+        "role": "user",
+        "content": command_str,
+    }
+    state_log.append(command_dict)
 
-# In-place navigation
-SITE: str = "https://www.duckduckgo.com"
-window.goto(SITE)
+    content: list[str] | str = window.locator("p").all_inner_texts()
+    if isinstance(content, list):
+        content: str = "\n".join(content)
+    command_str: str = (
+        "Command: `\\n`.join(window.locator('p').all_inner_texts())"
+    )
+    content_dict: dict = {
+        "role": "user",
+        "content": command_str + "\n" + content,
+    }
+    state_log.append(content_dict)
 
-command_dict: dict = {
-    "role": "user",
-    "content": f"Command: window.goto({SITE})",
-}
-state_log.append(command_dict)
+    for d in state_log:
+        assert isinstance(d, dict)
+        assert "role" in d
+        assert "content" in d
+        assert d["role"] in ["system", "user", "assistant"]
 
-content: list[str] | str = window.locator("p").all_inner_texts()
-if isinstance(content, list):
-    content: str = "\n".join(content)
-
-content_dict: dict = {
-    "role": "user",
-    "content": f"'\\n.'.join(window.locator('p').all_inner_texts()){content}",
-}
-state_log.append(content_dict)
-
-for d in state_log:
-    assert isinstance(d, dict)
-    assert "role" in d
-    assert "content" in d
-    assert d["role"] in ["system", "user", "assistant"]
-    print(d)
+        print(d)
