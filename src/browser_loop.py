@@ -1,6 +1,6 @@
 # %%
 """
-A persistent chatbot via system prompts, with brower API access.
+A persistent AI agent via system prompts, with browser API access.
 
 Note: the sync playwright API will not run in a notebook environment.
 """
@@ -26,6 +26,7 @@ SYSTEM_PROMPT: str = dedent(
     You will receive page text content from now on as a response.
     """
 )
+
 state_log: list[dict] = [
     {
         "role": "system",
@@ -67,8 +68,8 @@ SITE: str = "https://www.duckduckgo.com"
 window.goto(SITE)
 
 command_dict: dict = {
-    "role": "command",
-    "content": f"window.goto({SITE})",
+    "role": "user",
+    "content": f"Command: window.goto({SITE})",
 }
 state_log.append(command_dict)
 
@@ -77,10 +78,14 @@ if isinstance(content, list):
     content: str = "\n".join(content)
 
 content_dict: dict = {
-    "role": "'\\n.'.join(window.locator('p').all_inner_texts())",
-    "content": content,
+    "role": "user",
+    "content": f"'\\n.'.join(window.locator('p').all_inner_texts()){content}",
 }
 state_log.append(content_dict)
 
-for i in state_log:
-    print(i)
+for d in state_log:
+    assert isinstance(d, dict)
+    assert "role" in d
+    assert "content" in d
+    assert d["role"] in ["system", "user", "assistant"]
+    print(d)
