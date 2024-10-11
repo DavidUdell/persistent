@@ -50,13 +50,11 @@ def run(pwrite):
 
 
 # %%
-# OpenAI API
+# OpenAI client setup
 # Remember to export the OPENAI_API_KEY env variable first.
 client = openai.OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
 )
-
-# Model
 
 # %%
 # Interaction loop
@@ -92,4 +90,9 @@ if True:  # pylint: disable=using-constant-test
         assert "content" in d
         assert d["role"] in ["system", "user", "assistant"]
 
-        print(d)
+    completion = client.chat.completions.create(
+        messages=state_log,
+        model="gpt-4o-mini",
+    )
+
+    print(completion.choices[0].message.content)
