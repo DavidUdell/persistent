@@ -8,7 +8,7 @@ RUN groupadd --system ai_agent_group && useradd --system ai_agent --group ai_age
 COPY . /app
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential python3-dev
 RUN pip install -U pip setuptools wheel
-RUN pip install --no-cache-dir -e .
+RUN pip install --no-cache-dir -U -e .
 
 # Change to non-root user
 USER ai_agent
