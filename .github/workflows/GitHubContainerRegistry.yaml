@@ -2,6 +2,10 @@ name: Publish Docker Image to GitHub Container Registry
 
 on: push
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
