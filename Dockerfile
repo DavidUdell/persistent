@@ -1,4 +1,5 @@
-FROM python:latest
+# `greenlet` is not compatible with Python 3.13
+FROM python:3.11
 
 WORKDIR /app
 
@@ -14,4 +15,4 @@ RUN pip install --no-cache-dir -U -e .
 USER ai_agent
 
 # Run the application.
-CMD ["python3", "src/browser_loop.py"]
+# CMD ["python3", "src/browser_loop.py"]
