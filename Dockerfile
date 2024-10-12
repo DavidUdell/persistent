@@ -6,6 +6,7 @@ WORKDIR /app
 RUN groupadd --system ai_agent_group && useradd --system ai_agent --group ai_agent_group
 
 COPY . /app
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential python3-dev
 RUN pip install --no-cache-dir -e .
 
 # Change to non-root user
