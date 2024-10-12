@@ -12,7 +12,7 @@ RUN pip install -U pip setuptools wheel
 RUN pip install --no-cache-dir -U -e .
 
 # Change to non-root user
-USER ai_agent
+# USER ai_agent
 
 # Run the application.
 # CMD ["python3", "src/browser_loop.py"]
