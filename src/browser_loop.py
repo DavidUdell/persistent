@@ -1,10 +1,8 @@
-# %%
 """
 A persistent AI agent via system prompts, with browser API access.
 
 Note: the sync playwright API will not run in a notebook environment.
 """
-
 
 import os
 from textwrap import dedent
@@ -13,7 +11,6 @@ import openai
 from playwright.sync_api import sync_playwright
 
 
-# %%
 # Constants
 SYSTEM_PROMPT: str = dedent(
     """
@@ -36,7 +33,6 @@ state_log: list[dict] = [
 ]
 
 
-# %%
 # Browser setup functionality
 def run(pwrite):
     """Run playwright browser setup."""
@@ -49,14 +45,12 @@ def run(pwrite):
     return page_instance
 
 
-# %%
 # OpenAI client setup
 # Remember to export the OPENAI_API_KEY env variable first.
 client = openai.OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
 )
 
-# %%
 # Interaction loop
 if True:  # pylint: disable=using-constant-test
     # Launch browser
