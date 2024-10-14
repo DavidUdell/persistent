@@ -11,11 +11,19 @@ The `/src` directory contains source code for the AI agent implementation.
 ```
 docker run -it ghcr.io/davidudell/persistent:latest /bin/bash
 
-cd /src
+playwright install-deps
+
+playwright install
+
+cd src
+
+export DISPLAY=:99
 
 export OPENAI_API_KEY=<key_value>
 
-Xvfb :99 -screen 0 1024x768x16 $ python3 browser_loop.py
+Xvfb :99 -screen 0 1024x768x16 &
+
+python3 browser_loop.py
 ```
 
 ## Project Status
