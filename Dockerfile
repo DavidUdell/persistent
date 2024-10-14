@@ -10,11 +10,11 @@ COPY . /app
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential python3-dev xvfb
 RUN pip install -U pip setuptools wheel
 RUN pip install --no-cache-dir -U -e .
-RUN playwright install-deps && playwright install
+RUN playwright install-deps
+RUN playwright install
 
 # Change to non-root user
 # USER ai_agent
 
-# Run with `xvfb`
+# For `Xvfb`
 ENV DISPLAY=:99
-CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & exec /bin/bash"]
