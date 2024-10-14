@@ -96,9 +96,12 @@ if True:  # pylint: disable=using-constant-test
 
     # Execute the command. Hillariously insecure; this should live in a
     # container, really, at least.
-    new_input = exec(  # pylint: disable=exec-used
-        new_command,
-        globals(),
-        locals(),
-    )
+    try:
+        new_input = exec(  # pylint: disable=exec-used
+            new_command,
+            globals(),
+            locals(),
+        )
+    except Exception as e:  # pylint: disable=broad-except
+        new_input = f"Caught: {e}"
     print(new_input)
