@@ -10,9 +10,11 @@ COPY . /app
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential python3-dev
 RUN pip install -U pip setuptools wheel
 RUN pip install --no-cache-dir -U -e .
+RUN playwright install && playwright install-deps
 
 # Change to non-root user
 # USER ai_agent
 
-# Run the application.
-# CMD ["python3", "src/browser_loop.py"]
+# Run with `xvfb`
+ENV DISPLAY=:99
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & exec /bin/bash"]
