@@ -8,9 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 RUN pip install -U pip setuptools wheel
 RUN pip install --no-cache-dir -U -e .
 RUN playwright install-deps && playwright install
+RUN chmod +x /app/entrypoint.sh
 
-# For `Xvfb`
-ENV DISPLAY=:99
-
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD []
