@@ -17,4 +17,4 @@ python3 src/browser_loop.py
 ```
 
 ## Project Status
-An early stage WIP: 0.0.1
+0.0.2
