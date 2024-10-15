@@ -1,7 +1,7 @@
 """
-A persistent AI agent via system prompts, with browser API access.
+A persistent AI agent via system prompts, with browser access.
 
-Note: the sync playwright API will not run in a notebook environment.
+Note: the `playwright` sync API used herein will not run in a Jupyter notebook.
 """
 
 import os
@@ -16,12 +16,11 @@ from playwright.sync_api import sync_playwright
 LAUNCH_SITE: str = "https://www.duckduckgo.com"
 SYSTEM_PROMPT: str = dedent(
     """
-    You are an autonomous AI with browser access through the `playwright` API.
+    You are an autonomous AI with browser access through the Python
+    playwright API.
 
-    Decide what to do next, then issue a command from the following list by
-    replying with that command as a string:
-
-    -
+    Decide what to do next, then issue a command by replying with that command
+    as a Python string.
 
     You will receive page text content from now on as user responses.
     """
@@ -57,7 +56,9 @@ def action(
     contents.
     """
     command = explained_action.choices[0].message.content
-    command = command.split("Command:")[-1].strip().replace("`", "")
+    command = command.split("Command:")[-1]
+    command = command.strip()
+    command = command.replace("`", "'")
 
     try:
         content = exec(  # pylint: disable=exec-used
@@ -114,5 +115,7 @@ if window is not None:
 
     explainers_log = action(completion, explainers_log)
 else:
+    print("Log of agent actions:")
+    print()
     for i in explainers_log:
         print(i["content"])
