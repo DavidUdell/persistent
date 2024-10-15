@@ -13,4 +13,4 @@ RUN playwright install
 # For `Xvfb`
 ENV DISPLAY=:99
 
-CMD ["/bin/bash"]
+ENTRYPOINT ["/bin/bash"]
