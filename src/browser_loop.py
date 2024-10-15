@@ -8,10 +8,12 @@ import os
 from textwrap import dedent
 
 import openai
+from openai.types import Completion
 from playwright.sync_api import sync_playwright
 
 
 # Constants
+LAUNCH_SITE: str = "https://www.duckduckgo.com"
 SYSTEM_PROMPT: str = dedent(
     """
     You are an autonomous AI with browser access through the `playwright` API.
@@ -25,7 +27,7 @@ SYSTEM_PROMPT: str = dedent(
     """
 )
 
-state_log: list[dict] = [
+explainers_log: list[dict] = [
     {
         "role": "system",
         "content": f"{SYSTEM_PROMPT}",
@@ -33,7 +35,7 @@ state_log: list[dict] = [
 ]
 
 
-# Browser setup functionality
+# Browser initialization functionality
 def run(pwrite):
     """Run playwright browser setup."""
 
@@ -45,62 +47,72 @@ def run(pwrite):
     return page_instance
 
 
+# Explanation action loop functionality
+def action(
+    explained_action: Completion,
+    state_log: list[dict],
+) -> list[dict]:
+    """
+    Post-process an explained action string, execute it, and return resulting
+    contents.
+    """
+    command = explained_action.choices[0].message.content
+    command = command.split("Command:")[-1].strip().replace("`", "")
+
+    try:
+        content = exec(  # pylint: disable=exec-used
+            command,
+            globals(),
+            locals(),
+        )
+    except Exception as e:  # pylint: disable=broad-except
+        content = f"Caught: {e}"
+
+    state_log.append(
+        {
+            "role": "user",
+            "content": f"Command: {command}" + "\n" + content,
+        }
+    )
+
+    return state_log
+
+
 # OpenAI client setup
 # Remember to export the OPENAI_API_KEY env variable first.
 client = openai.OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
 )
 
-# Interaction loop
-if True:  # pylint: disable=using-constant-test
-    # Launch browser
-    window = run(sync_playwright().start())
+window = run(sync_playwright().start())
 
-    # In-place navigation
-    SITE: str = "https://www.duckduckgo.com"
-    command_str: str = f"Command: window.goto({SITE})"
-    window.goto(SITE)
-    command_dict: dict = {
+# Action 1
+window.goto(LAUNCH_SITE)
+explainers_log.append(
+    {
         "role": "user",
-        "content": command_str,
+        "content": f"Command: window.goto({LAUNCH_SITE})" + "\n",
     }
-    state_log.append(command_dict)
+)
 
-    content: list[str] | str = window.locator("p").all_inner_texts()
-    if isinstance(content, list):
-        content: str = "\n".join(content)
-    command_str: str = (
-        "Command: '\\n'.join(window.locator('p').all_inner_texts())"
-    )
-    content_dict: dict = {
+# Action 2
+page_content: str = "".join(window.locator("p").all_inner_texts())
+explainers_log.append(
+    {
         "role": "user",
-        "content": command_str + "\n" + content,
+        "content": "Command: ''.join(window.locator('p').all_inner_texts())"
+        + "\n"
+        + page_content,
     }
-    state_log.append(content_dict)
+)
 
-    for d in state_log:
-        assert isinstance(d, dict)
-        assert "role" in d
-        assert "content" in d
-        assert d["role"] in ["system", "user", "assistant"]
-
+if window is not None:
     completion = client.chat.completions.create(
-        messages=state_log,
+        messages=explainers_log,
         model="gpt-4o-mini",
     )
 
-    # print(completion.choices[0].message.content)
-    new_command = completion.choices[0].message.content
-    new_command = new_command.split("Command:")[-1].strip().replace("`", "")
-    print("\n", new_command, "\n")
-
-    # Execute the command. Hillariously insecure; this should live in a
-    # container, really, at least.
-    try:
-        new_input = exec(  # pylint: disable=exec-used
-            new_command,
-            globals(),
-            locals(),
-        )
-    except Exception as e:  # pylint: disable=broad-except
-        new_input = f"Caught: {e}"
+    explainers_log = action(completion, explainers_log)
+else:
+    for i in explainers_log:
+        print(i["content"])
