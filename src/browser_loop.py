@@ -70,7 +70,7 @@ if True:  # pylint: disable=using-constant-test
     if isinstance(content, list):
         content: str = "\n".join(content)
     command_str: str = (
-        "Command: `\\n`.join(window.locator('p').all_inner_texts())"
+        "Command: '\\n'.join(window.locator('p').all_inner_texts())"
     )
     content_dict: dict = {
         "role": "user",
@@ -89,10 +89,10 @@ if True:  # pylint: disable=using-constant-test
         model="gpt-4o-mini",
     )
 
-    print(completion.choices[0].message.content)
-
+    # print(completion.choices[0].message.content)
     new_command = completion.choices[0].message.content
-    new_command = new_command.split("Command:")[-1].strip()
+    new_command = new_command.split("Command:")[-1].strip().replace("`", "")
+    print("\n", new_command, "\n")
 
     # Execute the command. Hillariously insecure; this should live in a
     # container, really, at least.
@@ -104,4 +104,3 @@ if True:  # pylint: disable=using-constant-test
         )
     except Exception as e:  # pylint: disable=broad-except
         new_input = f"Caught: {e}"
-    print(new_input)

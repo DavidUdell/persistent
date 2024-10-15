@@ -11,9 +11,7 @@ The `/src` directory contains source code for the AI agent implementation.
 ```
 docker run -it ghcr.io/davidudell/persistent:latest /bin/bash
 
-playwright install-deps
-
-playwright install
+playwright install-deps && playwright install
 
 cd src
 
