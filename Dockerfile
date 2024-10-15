@@ -11,4 +11,4 @@ RUN playwright install-deps && playwright install
 RUN chmod +x /app/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD []
+CMD ["/bin/bash"]
