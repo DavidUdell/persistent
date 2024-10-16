@@ -67,7 +67,6 @@ def action(
             locals(),
         )
     except Exception as e:  # pylint: disable=broad-except
-        print(f"Caught: {e}")
         content = f"Caught: {e}"
 
     state_log.append(
@@ -107,15 +106,22 @@ explainers_log.append(
     }
 )
 
+act_idx: int = 3
+
 if window is not None:
     completion = client.chat.completions.create(
         messages=explainers_log,
         model="gpt-4o-mini",
     )
 
+    print(f"Action {act_idx}:")
+    print(completion.choices[0].message.content)
+    print()
+
     explainers_log = action(completion, explainers_log)
 else:
-    print("Log of agent actions:")
+    print()
+    print("Final log of agent actions:")
     print()
     for i in explainers_log:
         print(i["content"])
