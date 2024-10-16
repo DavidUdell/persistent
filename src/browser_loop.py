@@ -114,11 +114,11 @@ if window is not None:
         model="gpt-4o-mini",
     )
 
-    print(f"Action {act_idx}:")
-    print(completion.choices[0].message.content)
-    print()
-
     explainers_log = action(completion, explainers_log)
+
+    print(f"Action {act_idx}:")
+    print(explainers_log[-1]["content"])
+    print()
 
     act_idx += 1
 else:

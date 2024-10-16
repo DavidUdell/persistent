@@ -9,6 +9,8 @@ The `/src` directory contains source code for the AI agent implementation.
 
 ## User's Guide
 ```
+docker pull ghcr.io/davidudell/persistent:latest
+
 docker run -it ghcr.io/davidudell/persistent:latest
 
 export OPENAI_API_KEY=<key_value>
