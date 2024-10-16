@@ -119,6 +119,8 @@ if window is not None:
     print()
 
     explainers_log = action(completion, explainers_log)
+
+    act_idx += 1
 else:
     print()
     print("Final log of agent actions:")
