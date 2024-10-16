@@ -72,7 +72,7 @@ def action(
     state_log.append(
         {
             "role": "user",
-            "content": f"Command: {command}" + "\n" + content,
+            "content": f"Command: {command}\n{content}",
         }
     )
 
@@ -92,7 +92,7 @@ window.goto(LAUNCH_SITE)
 explainers_log.append(
     {
         "role": "user",
-        "content": f"Command: window.goto({LAUNCH_SITE})" + "\n",
+        "content": f"Command: window.goto({LAUNCH_SITE})\n",
     }
 )
 
@@ -102,8 +102,7 @@ explainers_log.append(
     {
         "role": "user",
         "content": "Command: ''.join(window.locator('p').all_inner_texts())"
-        + "\n"
-        + page_content,
+        + f"\n{page_content}",
     }
 )
 
