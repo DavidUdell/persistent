@@ -67,6 +67,7 @@ def action(
             locals(),
         )
     except Exception as e:  # pylint: disable=broad-except
+        print(f"Caught: {e}")
         content = f"Caught: {e}"
 
     state_log.append(
