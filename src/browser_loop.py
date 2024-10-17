@@ -44,6 +44,8 @@ def run(pwrite):
         timeout=0,
     )
     profile = browser_instance.new_context()
+    # Timeout disabled at context level too
+    profile.set_default_timeout(0)
     page_instance = profile.new_page()
 
     return page_instance
