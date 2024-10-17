@@ -39,7 +39,10 @@ def run(pwrite):
     """Run playwright browser setup."""
 
     # headless=True, the default, suppresses the actual browser window.
-    browser_instance = pwrite.chromium.launch(headless=False)
+    browser_instance = pwrite.chromium.launch(
+        headless=False,
+        timeout=0,
+    )
     profile = browser_instance.new_context()
     page_instance = profile.new_page()
 
