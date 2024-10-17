@@ -111,7 +111,7 @@ explainers_log.append(
 
 act_idx: int = 3
 
-if window is not None:
+while window is not None:
     completion = client.chat.completions.create(
         messages=explainers_log,
         model="gpt-4o-mini",
@@ -124,9 +124,9 @@ if window is not None:
     print()
 
     act_idx += 1
-else:
-    print()
-    print("Final log of agent actions:")
-    print()
-    for i in explainers_log:
-        print(i["content"])
+
+print()
+print("Final log of agent actions:")
+print()
+for i in explainers_log:
+    print(i["content"])

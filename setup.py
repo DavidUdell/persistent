@@ -8,7 +8,7 @@ setup(
     description="A proof-of-concept persistent chatbot implementation",
     long_description=open("README.markdown", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    version="0.0.2",
+    version="0.0.3",
     author="David Udell",
     license="MIT",
     packages=find_packages(),

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # Docker image and container management
 docker pull ghcr.io/davidudell/persistent:latest
