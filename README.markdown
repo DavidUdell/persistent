@@ -9,7 +9,7 @@ The `/src` directory contains source code for the AI agent implementation.
 
 ## User's Guide
 ```
-init.sh
+./init.sh
 
 export OPENAI_API_KEY=<key_value>
 
