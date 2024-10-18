@@ -10,6 +10,7 @@ len_api_key=${#api_key}
 
 # Ensure the key is not empty.
 if [ $len_api_key -gt 1 ]; then
+    xclock
     python3 src/browser_loop.py
 fi
 
