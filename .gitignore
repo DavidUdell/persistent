@@ -1,2 +1,6 @@
-# Ignore build stuff
+# Build stuff
 *.egg-info
+
+# Secrets
+.secrets
+secret_api_export.sh
