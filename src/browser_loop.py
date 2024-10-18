@@ -31,7 +31,8 @@ SYSTEM_PROMPT: str = dedent(
     _before_ that point then pass "Command: your_command_here" when ready.
 
     The window object is the current browser page, while the browser object is
-    the browser instance itself. Execution ends when window is None.
+    the browser instance itself. Execution ends when window is None or browser
+    is None. You can assign either of those to None to end the loop.
 
     You will receive page text content from now on as user responses. No
     outside human feedback will be provided. Initial hardcoded commands start
@@ -132,7 +133,7 @@ print()
 
 act_idx: int = 3
 
-while window is not None:
+while window is not None and browser is not None:
     completion = client.chat.completions.create(
         messages=explainers_log,
         model="gpt-4o",
