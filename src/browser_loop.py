@@ -130,7 +130,8 @@ SYSTEM_PROMPT: str = dedent(
 
         act_idx += 1
     ```
-    You will receive page text content from now on as user responses.
+    You will receive page text content from now on as user responses. No
+    outside human feedback will be provided. Good luck!
     '''
 )
 
@@ -230,7 +231,7 @@ act_idx: int = 3
 while window is not None:
     completion = client.chat.completions.create(
         messages=explainers_log,
-        model="gpt-4o-mini",
+        model="gpt-4o",
     )
 
     explainers_log = action(completion, explainers_log)
