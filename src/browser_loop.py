@@ -110,12 +110,11 @@ print(explainers_log[-1]["content"])
 print()
 
 # Hardcoded Action 2
-page_content: str = "".join(window.locator("p"))
+page_content: str = window.content()
 explainers_log.append(
     {
         "role": "user",
-        "content": "Command: ''.join(window.locator('p'))"
-        + f"\n{page_content}",
+        "content": "Command: window.content()" + f"\n{page_content}",
     }
 )
 print("Hardcoded Action 2:")
