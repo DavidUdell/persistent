@@ -10,8 +10,9 @@ docker system prune -f
 
 xhost +local:docker
 
-# Trying to hook up X11 inside the container to outside
+# Hook up to outside X server
 docker run -it \
     -e OPENAI_API_KEY=$OPENAI_API_KEY \
+    -e DISPLAY=$DISPLAY \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     ghcr.io/davidudell/persistent:latest
