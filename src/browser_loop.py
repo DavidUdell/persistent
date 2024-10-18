@@ -20,9 +20,18 @@ SYSTEM_PROMPT: str = dedent(
     
     Decide what to do next, then issue a command by replying with that command
     as a Python string. Remember to pass in commands without triple quotes or
-    ticks: these strings will go into exec(). The window object is the current
-    browser page, while the browser object is the browser instance itself.
-    Execution ends when window is None.
+    ticks: these strings will go into exec(). Commands are postprocessed with
+    the following:
+
+    command = command.split("Command:")[-1]
+    command = command.strip()
+    command = command.replace("`", "'")
+
+    So, _don't_ reason out load after the string literal "Command:". Reason
+    _before_ that point then pass "Command: your_command_here" when ready.
+
+    The window object is the current browser page, while the browser object is
+    the browser instance itself. Execution ends when window is None.
 
     You will receive page text content from now on as user responses. No
     outside human feedback will be provided. Initial hardcoded commands start
