@@ -131,7 +131,8 @@ SYSTEM_PROMPT: str = dedent(
         act_idx += 1
     ```
     You will receive page text content from now on as user responses. No
-    outside human feedback will be provided. Good luck!
+    outside human feedback will be provided. Remember to pass in commands
+    without triple quotes or ticks--just simple strings. Good luck!
     '''
 )
 
