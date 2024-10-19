@@ -133,7 +133,7 @@ print()
 
 act_idx: int = 3
 
-while window is not None and browser is not None:
+while window is not None or browser is not None:
     completion = client.chat.completions.create(
         messages=explainers_log,
         model="gpt-4o",
