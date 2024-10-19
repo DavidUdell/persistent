@@ -31,8 +31,9 @@ SYSTEM_PROMPT: str = dedent(
     _before_ that point then pass "Command: your_command_here" when ready.
 
     The window object is the current browser page, while the browser object is
-    the browser instance itself. Execution ends when window is None or browser
-    is None. You can assign either of those to None to end the loop.
+    the browser instance itself. Execution ends when state["window"] is None or
+    state["browser"] is None. You can assign either of those to None to end the
+    loop; note the state dict, to work around access through exec().
 
     You will receive page text content from now on as user responses. No
     outside human feedback will be provided. Initial hardcoded commands start
@@ -105,14 +106,18 @@ client = openai.OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
 )
 
-window, browser = run(sync_playwright().start())
+state: dict = {
+    "window": None,
+    "browser": None,
+}
+state["window"], state["browser"] = run(sync_playwright().start())
 
 # Hardcoded Action 1
-window.goto(LAUNCH_SITE)
+state["window"].goto(LAUNCH_SITE)
 explainers_log.append(
     {
         "role": "user",
-        "content": f"Command: window.goto({LAUNCH_SITE})\n",
+        "content": f"Command: state['window'].goto({LAUNCH_SITE})\n",
     }
 )
 print("Hardcoded Action 1:")
@@ -120,11 +125,11 @@ print(explainers_log[-1]["content"])
 print()
 
 # Hardcoded Action 2
-page_content: str = window.content()
+page_content: str = state["window"].content()
 explainers_log.append(
     {
         "role": "user",
-        "content": "Command: window.content()" + f"\n{page_content}",
+        "content": "Command: state['window'].content()" + f"\n{page_content}",
     }
 )
 print("Hardcoded Action 2:")
@@ -133,7 +138,7 @@ print()
 
 act_idx: int = 3
 
-while window is not None or browser is not None:
+while (state["window"] is not None) and (state["browser"] is not None):
     completion = client.chat.completions.create(
         messages=explainers_log,
         model="gpt-4o",
