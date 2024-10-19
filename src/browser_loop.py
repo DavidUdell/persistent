@@ -36,9 +36,11 @@ SYSTEM_PROMPT: str = dedent(
     loop; note the state dict, to work around access through exec().
 
     You will receive page text content from now on as user responses. No
-    outside human feedback will be provided. Initial hardcoded commands start
-    you at https://www.duckduckgo.com and read the whole page content. Why
-    don't you try to navigate to a range of different pages?
+    outside human feedback will be provided. Note that most Python playwright
+    actions don't return any content; ask for content explicitly with
+    state["window"].content(). Initial hardcoded commands start you at
+    https://www.duckduckgo.com and read the whole page content. Why don't you
+    try to navigate to a range of different pages?
     """
 )
 
@@ -153,7 +155,5 @@ while (state["window"] is not None) and (state["browser"] is not None):
     act_idx += 1
 
 print()
-print("Final log of agent actions:")
+print(f"Actions log ends; {act_idx - 1} actions taken.")
 print()
-for i in explainers_log:
-    print(i["content"])
