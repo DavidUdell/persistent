@@ -9,7 +9,7 @@ api_key=$OPENAI_API_KEY
 len_api_key=${#api_key}
 
 # Ensure the key is not empty.
-if [ $len_api_key -gt 1 ]; then
+if [[ "$len_api_key" -gt 1 ]]; then
     python3 src/browser_loop.py > actions_log.txt
 fi
 
