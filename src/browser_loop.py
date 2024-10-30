@@ -79,7 +79,11 @@ def action(
     contents.
     """
     command = explained_action.choices[0].message.content
-    command = command.split("Command:")[-1]
+    commands = command.split("Command:")
+    for c in commands:
+        print(c)
+
+    command = commands[-1]
     command = command.strip()
     command = command.replace("`", "'")
 
