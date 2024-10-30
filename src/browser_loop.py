@@ -36,17 +36,11 @@ SYSTEM_PROMPT: str = dedent(
     loop; note the state dict, to work around access through exec().
 
     You will receive page text content from now on as user responses. No
-    outside human feedback will be provided. Note that most Python playwright
-    actions don't return any content; ask for content explicitly with
-    state["window"].content(). Initial hardcoded commands start you at
-    https://www.duckduckgo.com and read the whole page content. Why don't you
-    try to navigate to a range of different pages?
+    outside human feedback will be provided.
     """
 )
 
-LAUNCH_SITE: str = "https://www.duckduckgo.com"
-
-explainers_log: list[dict] = [
+logs: list[dict] = [
     {
         "role": "system",
         "content": f"{SYSTEM_PROMPT}",
@@ -54,36 +48,33 @@ explainers_log: list[dict] = [
 ]
 
 
-# Browser initialization functionality
-def run(pwrite):
-    """Run playwright browser setup."""
+def kickstart(p_wright):
+    """Start the playwright browser instance."""
 
-    # headless=True, the default, suppresses the actual browser window.
-    browser_instance = pwrite.chromium.launch(
+    # headless=False to expose the browser window
+    browser_out = p_wright.chromium.launch(
         headless=False,
         timeout=0,
     )
-    profile = browser_instance.new_context()
-    page_instance = profile.new_page()
+    profile = browser_out.new_context()
+    page_out = profile.new_page()
 
-    return page_instance, browser_instance
+    return page_out, browser_out
 
 
-# Explanation action loop functionality
-def action(
-    explained_action: Completion,
-    state_log: list[dict],
+def take_action(
+    unparsed_action: Completion,
+    running_logs: list[dict],
 ) -> list[dict]:
-    """
-    Post-process an explained action string, execute it, and return resulting
-    contents.
-    """
-    command = explained_action.choices[0].message.content
-    commands = command.split("Command:")
-    for c in commands:
-        print(c)
+    """Postprocess and execute a model action."""
+    raw = unparsed_action.choices[0].message.content
+    split = raw.split("Command:")
 
-    command = commands[-1]
+    for comment in split:
+        print(comment)
+
+    # Postprocess
+    command = split[-1]
     command = command.strip()
     command = command.replace("`", "'")
 
@@ -96,14 +87,20 @@ def action(
     except Exception as e:  # pylint: disable=broad-except
         content = f"Caught: {e}"
 
-    state_log.append(
+    running_logs.append(
         {
             "role": "user",
-            "content": f"Command: {command}\n{content}",
+            "content": dedent(
+                f"""
+                Command: {command}
+                Exec content: {content}
+                Page content: {state["window"].content()}
+                """
+            ),
         }
     )
 
-    return state_log
+    return running_logs
 
 
 # OpenAI client setup
@@ -116,48 +113,20 @@ state: dict = {
     "window": None,
     "browser": None,
 }
-state["window"], state["browser"] = run(sync_playwright().start())
+state["window"], state["browser"] = kickstart(sync_playwright().start())
 
-# Hardcoded Action 1
-state["window"].goto(LAUNCH_SITE)
-explainers_log.append(
-    {
-        "role": "user",
-        "content": f"Command: state['window'].goto({LAUNCH_SITE})\n",
-    }
-)
-print("Hardcoded Action 1:")
-print(explainers_log[-1]["content"])
-print()
-
-# Hardcoded Action 2
-page_content: str = state["window"].content()
-explainers_log.append(
-    {
-        "role": "user",
-        "content": "Command: state['window'].content()" + f"\n{page_content}",
-    }
-)
-print("Hardcoded Action 2:")
-print(explainers_log[-1]["content"])
-print()
-
-act_idx: int = 3
-
+step: int = 1
 while (state["window"] is not None) and (state["browser"] is not None):
-    completion = client.chat.completions.create(
-        messages=explainers_log,
+    reply = client.chat.completions.create(
+        messages=logs,
         model="gpt-4o",
     )
 
-    explainers_log = action(completion, explainers_log)
+    logs = take_action(reply, logs)
 
-    print(f"Action {act_idx}:")
-    print(explainers_log[-1]["content"])
-    print()
+    print(f"Step {step}:")
+    print(logs[-1]["content"], end="\n\n")
 
-    act_idx += 1
+    step += 1
 
-print()
-print(f"Actions log ends; {act_idx - 1} actions taken.")
-print()
+print("\n", f"Logs end: {step} steps taken.")
