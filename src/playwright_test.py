@@ -3,7 +3,7 @@
 from playwright.sync_api import sync_playwright
 
 
-def action_like(page, browser):  # pylint: disable=unused-argument
+def action_like(page_in, browser_in):  # pylint: disable=unused-argument
     """Test action-like function loop."""
 
     # Solicit input text
@@ -15,7 +15,7 @@ def action_like(page, browser):  # pylint: disable=unused-argument
             globals(),
             locals(),
         )
-        print(page.content())
+        print(page_in.content())
     except Exception as e:  # pylint: disable=broad-except
         print(e)
 
