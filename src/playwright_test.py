@@ -3,22 +3,21 @@
 from playwright.sync_api import sync_playwright
 
 
-def action_like():
+def action_like(page, browser):  # pylint: disable=unused-argument
     """Test action-like function loop."""
 
     # Solicit input text
     input_text = input("$:")
 
     try:
-        content = exec(  # pylint: disable=exec-used
+        exec(  # pylint: disable=exec-used
             input_text,
             globals(),
             locals(),
         )
+        print(page.content())
     except Exception as e:  # pylint: disable=broad-except
-        content = e
-
-    print(content)
+        print(e)
 
 
 def kickstart(pwriter):
@@ -37,5 +36,5 @@ page, browser = kickstart(sync_playwright().start())
 step: int = 0
 while True:
     step += 1
-    action_like()
+    action_like(page, browser)
     print(step)
