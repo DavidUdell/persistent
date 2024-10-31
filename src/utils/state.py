@@ -31,7 +31,7 @@ def exec_action(
         content += state.page.content()
 
     except Exception as exception:  # pylint: disable=broad-except
-        content: str = exception
+        content: str = f"Caught: {exception}"
 
     log: dict = {
         "role": "user",
