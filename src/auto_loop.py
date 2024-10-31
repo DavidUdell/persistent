@@ -11,7 +11,7 @@ import openai
 from playwright.sync_api import sync_playwright
 
 from utils.playwright import kickstart
-from utils.update_state import take_action
+from utils.state import take_action
 
 
 # Constants
