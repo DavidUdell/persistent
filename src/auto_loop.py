@@ -8,8 +8,10 @@ import os
 from textwrap import dedent
 
 import openai
-from openai.types import Completion
 from playwright.sync_api import sync_playwright
+
+from utils.playwright import kickstart
+from utils.update_state import take_action
 
 
 # Constants
@@ -46,61 +48,6 @@ logs: list[dict] = [
         "content": f"{SYSTEM_PROMPT}",
     },
 ]
-
-
-def kickstart(p_wright):
-    """Start the playwright browser instance."""
-
-    # headless=False to expose the browser window
-    browser_out = p_wright.chromium.launch(
-        headless=False,
-        timeout=0,
-    )
-    profile = browser_out.new_context()
-    page_out = profile.new_page()
-
-    return page_out, browser_out
-
-
-def take_action(
-    unparsed_action: Completion,
-    running_logs: list[dict],
-) -> list[dict]:
-    """Postprocess and execute a model action."""
-    raw = unparsed_action.choices[0].message.content
-    split = raw.split("Command:")
-
-    for comment in split:
-        print(comment)
-
-    # Postprocess
-    command = split[-1]
-    command = command.strip()
-    command = command.replace("`", "'")
-
-    try:
-        content = exec(  # pylint: disable=exec-used
-            command,
-            globals(),
-            locals(),
-        )
-    except Exception as e:  # pylint: disable=broad-except
-        content = f"Caught: {e}"
-
-    running_logs.append(
-        {
-            "role": "user",
-            "content": dedent(
-                f"""
-                Command: {command}
-                Exec content: {content}
-                Page content: {state["window"].content()}
-                """
-            ),
-        }
-    )
-
-    return running_logs
 
 
 # OpenAI client setup
