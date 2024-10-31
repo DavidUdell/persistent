@@ -10,7 +10,7 @@ len_api_key=${#api_key}
 
 # Ensure the key is not empty.
 if [[ "$len_api_key" -gt 1 ]]; then
-    python3 src/browser_loop.py | tee log.txt
+    python3 src/loop.py | tee log.txt
 fi
 
 exec "$@"
