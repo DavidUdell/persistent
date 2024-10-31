@@ -10,8 +10,8 @@ from textwrap import dedent
 import openai
 from playwright.sync_api import sync_playwright
 
-from utils.playwright import kickstart
-from utils.state import take_action
+from utils.p_wright import kickstart
+from utils.state import exec_action
 
 
 # Constants
@@ -69,7 +69,7 @@ while (state["window"] is not None) and (state["browser"] is not None):
         model="gpt-4o",
     )
 
-    logs = take_action(reply, logs)
+    logs = exec_action(reply, logs)
 
     print(f"Step {step}:")
     print(logs[-1]["content"], end="\n\n")

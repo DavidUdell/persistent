@@ -1,9 +1,7 @@
 """State management utilities."""
 
-from textwrap import dedent
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from openai.types import Completion
 from playwright.sync_api import Browser, Page
 
 
@@ -11,51 +9,36 @@ from playwright.sync_api import Browser, Page
 class Logs:
     """Logs state management, always in the global scope."""
 
-    logs: list[dict] = []
-    step: int = 0
     page: Page
     browser: Browser
+    step: int = 0
+    logs: list[dict] = field(default_factory=list)
 
 
-def take_action(
-    response: Completion,
+def exec_action(
+    command: str,
     state: Logs,
-) -> list[dict]:
-    """Postprocess and execute a model action."""
-
-    response_text = response.choices[0].message.content
-    split_text = response_text.split("Command:")
-
-    for comment in split_text:
-        print(comment)
-
-    # Postprocessing for exec
-    command = split_text[-1]
-    command = command.strip()
-    command = command.replace("`", "'")
+) -> Logs:
+    """Execute, log, and print a model command."""
 
     try:
-        exec(  # pylint: disable=exec-used
+        content: str | None = exec(  # pylint: disable=exec-used
             command,
             globals(),
             locals(),
         )
-        content = state
+        content: str = "" if content is None else content
+        content += state.page.content()
 
-    except Exception as e:  # pylint: disable=broad-except
-        content = f"Caught: {e}"
+    except Exception as exception:  # pylint: disable=broad-except
+        content: str = exception
 
-    state.append(
-        {
-            "role": "user",
-            "content": dedent(
-                f"""
-                Command: {command}
-                Exec content: {content}
-                Page content: {state["window"].content()}
-                """
-            ),
-        }
-    )
+    log: dict = {
+        "role": "user",
+        "content": f"Command: {command}\nContent: {content}",
+    }
+
+    print(log["content"])
+    state.logs.append(log)
 
     return state
