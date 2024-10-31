@@ -13,8 +13,8 @@ The `/src` directory contains source code for the AI agent implementation.
 
 export OPENAI_API_KEY=<key_value>
 
-python3 src/browser_loop.py > actions_log.txt
+python3 src/loop.py | tee log.txt
 ```
 
 ## Project Status
-0.1.1
+0.1.2
