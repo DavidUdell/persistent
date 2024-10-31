@@ -56,7 +56,7 @@ initial_log: dict = {
 }
 state.logs.append(initial_log)
 
-while page.window is not None and page.browser is not None:
+while state.page is not None and state.browser is not None:
     response: Completion = client.chat.completions.create(
         messages=state.logs,
         model="gpt-4o",
