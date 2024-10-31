@@ -20,6 +20,6 @@ def postprocess(
     split_content[-1] = split_content[-1].strip().replace("`", "'")
 
     for i in split_content[:-1]:
-        print(i)
+        print(i, sep="\n\n")
 
     return split_content

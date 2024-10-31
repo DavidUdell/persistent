@@ -1,20 +1,21 @@
 """
 A persistent AI agent via system prompts, with browser access.
 
-Note: the `playwright` sync API used herein will not run in a Jupyter notebook.
+Note that the `playwright` sync API used here will not run in a Jupyter
+notebook.
 """
 
 import os
 from textwrap import dedent
 
-import openai
-from playwright.sync_api import sync_playwright
+from openai import OpenAI
+from openai.types import Completion
 
+from utils.model_api import postprocess
 from utils.p_wright import kickstart
-from utils.state import exec_action
+from utils.state import exec_action, Logs
 
 
-# Constants
 SYSTEM_PROMPT: str = dedent(
     """
     You are an autonomous AI with browser access through the Python playwright
@@ -32,48 +33,34 @@ SYSTEM_PROMPT: str = dedent(
     So, _don't_ reason out load after the string literal "Command:". Reason
     _before_ that point then pass "Command: your_command_here" when ready.
 
-    The window object is the current browser page, while the browser object is
-    the browser instance itself. Execution ends when state["window"] is None or
-    state["browser"] is None. You can assign either of those to None to end the
-    loop; note the state dict, to work around access through exec().
+    The page object is the current browser page, while the browser object is
+    the browser itself. Execution ends when state.page is None or
+    state.browser is None. You can assign either of those to None to end the
+    loop.
 
     You will receive page text content from now on as user responses. No
     outside human feedback will be provided.
     """
 )
 
-logs: list[dict] = [
-    {
-        "role": "system",
-        "content": f"{SYSTEM_PROMPT}",
-    },
-]
-
-
-# OpenAI client setup
-# Remember to export the OPENAI_API_KEY env variable first.
-client = openai.OpenAI(
+client: OpenAI = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
 )
 
-state: dict = {
-    "window": None,
-    "browser": None,
-}
-state["window"], state["browser"] = kickstart(sync_playwright().start())
+page, browser = kickstart()
+state: Logs = Logs(page, browser)
 
-step: int = 1
-while (state["window"] is not None) and (state["browser"] is not None):
-    reply = client.chat.completions.create(
-        messages=logs,
+initial_log: dict = {
+    "role": "system",
+    "content": f"{SYSTEM_PROMPT}",
+}
+state.logs.append(initial_log)
+
+while page.window is not None and page.browser is not None:
+    response: Completion = client.chat.completions.create(
+        messages=state.logs,
         model="gpt-4o",
     )
-
-    logs = exec_action(reply, logs)
-
-    print(f"Step {step}:")
-    print(logs[-1]["content"], end="\n\n")
-
-    step += 1
-
-print("\n", f"Logs end: {step} steps taken.")
+    processed: list[str] = postprocess(response)
+    command: str = processed[-1]
+    state: Logs = exec_action(command, state)

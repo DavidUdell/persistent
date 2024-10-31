@@ -1,7 +1,7 @@
-"""Manually experimenting with `playwright`."""
+"""Manual terminal into `playwright` interface."""
 
-from utils.state import exec_action, Logs
 from utils.p_wright import kickstart
+from utils.state import exec_action, Logs
 
 
 page, browser = kickstart()

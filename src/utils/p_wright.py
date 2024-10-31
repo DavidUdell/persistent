@@ -14,4 +14,4 @@ def kickstart() -> tuple[Page, Browser]:
     )
     page = browser.new_page()
 
-    return (page, browser)
+    return page, browser
