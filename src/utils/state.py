@@ -42,3 +42,18 @@ def exec_action(
     state.logs.append(log)
 
     return state
+
+
+def trim(state: Logs, context_limit: int) -> Logs:
+    """Trim logs beneath a context size."""
+
+    total: int = 0
+
+    for i, d in enumerate(state.logs):
+        content: str = d.get("content", "")
+        total += len(content)
+        if total >= context_limit:
+            state.logs = [state.logs[0]] + state.logs[i:]
+            return state
+
+    return state

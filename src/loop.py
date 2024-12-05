@@ -13,9 +13,9 @@ from openai.types import Completion
 
 from utils.model_api import postprocess
 from utils.p_wright import kickstart
-from utils.state import exec_action, Logs
+from utils.state import exec_action, trim, Logs
 
-
+CONTEXT_LIMIT: int = 50000
 SYSTEM_PROMPT: str = dedent(
     """
     You are an autonomous AI with browser access through the Python playwright
@@ -53,6 +53,7 @@ initial_log: dict = {
 state.logs.append(initial_log)
 
 while state.page is not None and state.browser is not None:
+    state: Logs = trim(state, CONTEXT_LIMIT)
     response: Completion = client.chat.completions.create(
         messages=state.logs,
         model="gpt-4o",
