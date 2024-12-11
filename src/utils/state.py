@@ -49,11 +49,11 @@ def trim(state: Logs, context_limit: int) -> Logs:
 
     total: int = 0
 
-    for i, d in enumerate(state.logs):
+    for d in state.logs:
         content: str = d.get("content", "")
         total += len(content)
         if total >= context_limit:
-            state.logs = [state.logs[0]] + state.logs[i:]
+            state.logs = [state.logs[0]] + state.logs[-2:]
             return state
 
     return state
