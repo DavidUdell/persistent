@@ -11,11 +11,11 @@ from textwrap import dedent
 from openai import OpenAI
 from openai.types import Completion
 
+from tiktoken import encoding_for_model
 from utils.model_api import postprocess
 from utils.p_wright import kickstart
 from utils.state import exec_action, trim, Logs
 
-CONTEXT_LIMIT: int = 50000
 SYSTEM_PROMPT: str = dedent(
     """
     You are an autonomous AI with browser access through the Python playwright
@@ -38,10 +38,12 @@ SYSTEM_PROMPT: str = dedent(
     outside human feedback will be provided.
     """
 )
+CONTEXT_LIMIT: int = 100000
 
 client: OpenAI = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
 )
+tokenizer = encoding_for_model("gpt-4")
 
 page, browser = kickstart()
 state: Logs = Logs(page, browser)
@@ -53,7 +55,7 @@ initial_log: dict = {
 state.logs.append(initial_log)
 
 while state.page is not None and state.browser is not None:
-    state: Logs = trim(state, CONTEXT_LIMIT)
+    state: Logs = trim(state, CONTEXT_LIMIT, tokenizer)
     response: Completion = client.chat.completions.create(
         messages=state.logs,
         model="gpt-4o",

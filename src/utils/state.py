@@ -44,16 +44,21 @@ def exec_action(
     return state
 
 
-def trim(state: Logs, context_limit: int) -> Logs:
+def trim(state: Logs, context_limit: int, tokenizer) -> Logs:
     """Trim logs beneath a context size."""
 
-    total: int = 0
+    running_total: int = 0
+    new_logs = []
 
-    for d in state.logs:
-        content: str = d.get("content", "")
-        total += len(content)
-        if total >= context_limit:
-            state.logs = [state.logs[0]] + state.logs[-2:]
-            return state
+    for entry in reversed(state.logs[1:]):
+        content: str = entry.get("content", "")
+        # There's an additional overhead of about 3 tokens per dict.
+        seq = tokenizer.encode(content)
+        if running_total + len(seq) + 10 <= context_limit:
+            new_logs.append(entry)
+            running_total += len(seq)
+        else:
+            break
+    state.logs = [state.logs[0]] + list(reversed(new_logs))
 
     return state
