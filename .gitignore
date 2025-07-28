@@ -1,6 +1,7 @@
 # Build stuff
 *.egg-info
 __pycache__
+.python-version
 
 # Secrets
 .secrets
