@@ -41,6 +41,7 @@ SYSTEM_PROMPT: str = dedent(
 )
 CONTEXT_LIMIT: int = 100000
 
+
 client: OpenAI = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
 )
