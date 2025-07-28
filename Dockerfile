@@ -22,8 +22,7 @@ RUN --mount=type=cache,target=/root/.cache/uv,sharing=locked \
 # Playwright
 ENV PLAYWRIGHT_BROWSERS_PATH=/root/.cache/ms-playwright \
     PATH="/app/.venv/bin:$PATH"
-RUN --mount=type=cache,target=/root/.cache/ms-playwright,sharing=locked \
-    playwright install-deps && playwright install chromium
+RUN playwright install-deps && playwright install chromium
 
 # src
 COPY . .
