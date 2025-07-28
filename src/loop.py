@@ -16,6 +16,7 @@ from utils.model_api import postprocess
 from utils.p_wright import kickstart
 from utils.state import exec_action, trim, Logs
 
+
 SYSTEM_PROMPT: str = dedent(
     """
     You are an autonomous AI with browser access through the Python playwright
