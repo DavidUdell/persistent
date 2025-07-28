@@ -4,4 +4,8 @@ version = "0.1.2"
 description = "A proof-of-concept persistent chatbot implementation"
 readme = "README.markdown"
 requires-python = ">=3.13"
-dependencies = ["openai", "playwright", "tiktoken"]
+dependencies = [
+    "openai",
+    "playwright",
+    "tiktoken",
+]
