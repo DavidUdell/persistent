@@ -33,3 +33,5 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ env.REPOSITORY_NAME }}:latest
+          cache-from: type=registry,ref=ghcr.io/${{ env.REPOSITORY_NAME }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ env.REPOSITORY_NAME }}:buildcache,mode=max
